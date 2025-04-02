@@ -1,0 +1,53 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+
+main {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.footer {
+  margin-top: auto;
+  background-color: #343a40;
+  color: white;
+  padding: 1rem 0;
+}
+
+/* Styles communs pour les formulaires */
+.form-control:focus {
+  outline: none;
+}
+
+.btn {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Styles pour les titres des cartes */
+.card-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+/* Animation pour les boutons */
+.btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}

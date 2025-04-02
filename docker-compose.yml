@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+
+  eureka-server:
+    build: ./serverdiscover
+
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - spring-cloud-network
+
+  api-gateway:
+    build: ./ApiGateway
+    container_name: api-gateway
+    ports:
+      - "8093:8093"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud-network
+
+  projetmicroservicesrepasfiras:
+    build: ./projetmicroservicesrepasfiras  # Corrigé ici
+    container_name: user-service  # Nom du container corrigé si nécessaire
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    networks:
+      - spring-cloud-network
+
+networks:
+  spring-cloud-network:
+    driver: bridge
