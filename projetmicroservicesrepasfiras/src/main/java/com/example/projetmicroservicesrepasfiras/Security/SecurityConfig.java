@@ -56,7 +56,9 @@ public class SecurityConfig {
                 authorize
                     .requestMatchers("/auth/**", "/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/api/users/profile").authenticated()
-                    .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_ADMIN", "ADMIN")
+                        .requestMatchers("/api/password/**").permitAll()  // Permettre l'accès public aux endpoints de réinitialisation
+
+                        .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_ADMIN", "ADMIN")
                     .anyRequest().authenticated();
                 System.out.println("Authorization rules configured");
             })

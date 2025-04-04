@@ -33,6 +33,8 @@ public class User implements UserDetails {
 
     private String password;
 
+    private String verificationCode;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 255, nullable = false)
     private Role role;
@@ -71,4 +73,7 @@ public class User implements UserDetails {
         USER,
         ADMIN
     }
+    private String resetToken;
+    private Date tokenExpiration;
+
 }

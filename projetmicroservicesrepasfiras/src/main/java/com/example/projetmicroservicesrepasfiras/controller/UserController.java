@@ -2,8 +2,11 @@ package com.example.projetmicroservicesrepasfiras.controller;
 
 import com.example.projetmicroservicesrepasfiras.Entity.User;
 import com.example.projetmicroservicesrepasfiras.service.UserService;
+import com.example.projetmicroservicesrepasfiras.service.PDFService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,6 +21,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final PDFService pdfService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -61,6 +65,20 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error deleting user: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/download-pdf")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<byte[]> downloadUsersPDF() {
+        List<User> users = userService.getAllUsers();
+        byte[] pdfBytes = pdfService.generateUsersPDF(users);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "users-list.pdf");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }
 

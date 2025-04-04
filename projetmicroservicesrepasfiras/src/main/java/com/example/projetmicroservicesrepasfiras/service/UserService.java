@@ -10,8 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -49,11 +48,11 @@ public class UserService implements UserDetailsService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("User not found with id: " + id));
-        
+
         if (user.getRole() == User.Role.ADMIN) {
             throw new IllegalStateException("Cannot delete admin users");
         }
-        
+
         userRepository.delete(user);
     }
 
@@ -82,7 +81,12 @@ public class UserService implements UserDetailsService {
             existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
         // Don't allow role changes through this method for security
-        
+
         return userRepository.save(existingUser);
     }
+
+
+
+
+
 }
