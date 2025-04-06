@@ -36,16 +36,35 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = userService.findByEmail(auth.getName());
-        
-        // Only allow users to update their own profile unless they're an admin
-        if (!currentUser.getRole().equals(User.Role.ADMIN) && !currentUser.getId().equals(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your own profile");
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestBody User updatedUser) {
+        try {
+            // Get the authenticated user
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User currentUser = userService.findByEmail(auth.getName());
+            
+            // Check if the user is trying to update someone else's profile by changing the email
+            if (updatedUser.getEmail() != null && !updatedUser.getEmail().equals(currentUser.getEmail())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You cannot change the email to another user's email. You can only update your own profile.");
+            }
+            
+            // Ensure the email remains the same as the authenticated user
+            updatedUser.setEmail(currentUser.getEmail());
+            
+            // Update the authenticated user's profile
+            User updatedProfile = userService.updateUser(currentUser.getId(), updatedUser);
+            return ResponseEntity.ok(updatedProfile);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error updating profile: " + e.getMessage());
         }
+    }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
         try {
             User user = userService.updateUser(id, updatedUser);
             return ResponseEntity.ok(user);
@@ -81,5 +100,3 @@ public class UserController {
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 }
-
-

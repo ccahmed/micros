@@ -193,8 +193,15 @@
         </dependency>
 
 
-
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.3</version>
+        </dependency>
 
         <!-- iText pour la génération de PDF -->
         <dependency>
@@ -212,6 +219,32 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>layout</artifactId>
             <version>8.0.2</version>
+        </dependency>
+
+        <!-- Google OAuth2 Client -->
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>1.34.1</version>
+        </dependency>
+        
+        <!-- Google HTTP Client Jackson2 -->
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson2</artifactId>
+            <version>1.43.3</version>
+        </dependency>
+        
+        <!-- Google OAuth2 Client Jackson2 -->
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-jackson2</artifactId>
+            <version>1.34.1</version>
         </dependency>
 
     </dependencies>

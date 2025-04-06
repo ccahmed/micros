@@ -18,8 +18,8 @@ public class ApiGatewayApplication {
     @Bean
     public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("user", r -> r.path("/auth/users/**")
-                        .uri("http://localhost:8084/"))
+                .route("user-service-auth", r -> r.path("/auth/**")
+                        .uri("lb://projetmicroservicesrepasfiras"))
 
                 .build();
     }

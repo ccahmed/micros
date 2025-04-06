@@ -54,11 +54,19 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> {
                 System.out.println("Configuring authorization rules");
                 authorize
-                    .requestMatchers("/auth/**", "/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers("/auth/welcome").permitAll()
+                    .requestMatchers("/auth/hello").permitAll()
+                    .requestMatchers("/auth/register").permitAll()
+                    .requestMatchers("/auth/login").permitAll()
+                    .requestMatchers("/auth/google").permitAll()
+                    .requestMatchers("/auth/forgot-password").permitAll()
+                    .requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/api/users/profile").authenticated()
-                        .requestMatchers("/api/password/**").permitAll()  // Permettre l'accès public aux endpoints de réinitialisation
-
-                        .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_ADMIN", "ADMIN")
+                    .requestMatchers("/api/password/**").permitAll()
+                    .requestMatchers("/auth/reset-password").permitAll()
+                    .requestMatchers("/auth/verify-email").permitAll()
+                    .requestMatchers("/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
+                    .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_ADMIN", "ADMIN")
                     .anyRequest().authenticated();
                 System.out.println("Authorization rules configured");
             })
@@ -85,11 +93,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

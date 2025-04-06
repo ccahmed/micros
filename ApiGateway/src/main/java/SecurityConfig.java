@@ -28,28 +28,39 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        System.out.println("Configuring security filter chain");
+
+        // Define public paths
+        String[] publicPaths = new String[]{"/auth/hello", "/auth/welcome", "/auth/register", "/auth/login", "/eureka/**"};
+        System.out.println("Configuring public paths: " + String.join(", ", publicPaths));
+        
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.addAllowedOrigin("http://localhost:4200");
+                    config.addAllowedOrigin("*");
                     config.addAllowedMethod("*");
                     config.addAllowedHeader("*");
-                    config.setAllowCredentials(true);
                     return config;
                 }))
-                .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/eureka/**").permitAll()
-                        .pathMatchers("/auth/register", "/auth/login", "/auth/welcome").permitAll()
+                .authorizeExchange(exchanges -> {
+                    System.out.println("Configuring authorization rules");
+                    for (String path : publicPaths) {
+                        System.out.println("Permitting all access to: " + path);
+                        exchanges.pathMatchers(path).permitAll();
+                    }
+                    exchanges
                         .pathMatchers("/api/users/profile").authenticated()
                         .pathMatchers("/api/users/**").hasRole("ADMIN")
-                        .anyExchange().authenticated()
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                    .jwt(jwt -> {
-                        jwt.jwkSetUri(issuerUri + "/protocol/openid-connect/certs");
-                        jwt.jwtAuthenticationConverter(grantedAuthoritiesExtractor());
-                    }))
+                        .anyExchange().authenticated();
+                    System.out.println("Authorization rules configured");
+                })
+                .oauth2ResourceServer(oauth2 -> {
+                    System.out.println("Configuring JWT authentication");
+                    oauth2.jwt(jwt -> jwt
+                        .jwkSetUri(issuerUri + "/protocol/openid-connect/certs")
+                        .jwtAuthenticationConverter(grantedAuthoritiesExtractor()));
+                })
                 .build();
     }
 

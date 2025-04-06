@@ -37,8 +37,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
+        System.out.println("Recherche de l'utilisateur avec l'email: " + email);
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        System.out.println("Utilisateur trouvé: " + user);
+        return user;
     }
 
     public List<User> getAllUsers() {
@@ -58,7 +61,7 @@ public class UserService implements UserDetailsService {
 
     public User updateUser(Long id, User updatedUser) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("User not found with id: " + id));
+            .orElseThrow(() -> new IllegalStateException("User with id " + id + " does not exist"));
 
         // Update fields if they are not null
         if (updatedUser.getFirstName() != null) {
@@ -68,19 +71,17 @@ public class UserService implements UserDetailsService {
             existingUser.setLastName(updatedUser.getLastName());
         }
         if (updatedUser.getEmail() != null) {
-            // Check if email is already taken by another user
-            userRepository.findByEmail(updatedUser.getEmail())
-                    .ifPresent(user -> {
-                        if (!user.getId().equals(existingUser.getId())) {
-                            throw new IllegalStateException("Email already taken");
-                        }
-                    });
+            // Only check for email uniqueness if the email is actually changing
+            if (!updatedUser.getEmail().equals(existingUser.getEmail())) {
+                if (userRepository.findByEmail(updatedUser.getEmail()).isPresent()) {
+                    throw new IllegalStateException("Email already taken");
+                }
+            }
             existingUser.setEmail(updatedUser.getEmail());
         }
-        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+        if (updatedUser.getPassword() != null) {
             existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
-        // Don't allow role changes through this method for security
 
         return userRepository.save(existingUser);
     }
