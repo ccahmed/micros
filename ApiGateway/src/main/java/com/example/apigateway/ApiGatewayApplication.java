@@ -20,6 +20,8 @@ public class ApiGatewayApplication {
         return builder.routes()
                 .route("user-service-auth", r -> r.path("/auth/**")
                         .uri("lb://projetmicroservicesrepasfiras"))
+                .route("user-service-api", r -> r.path("/api/**")
+                        .uri("lb://projetmicroservicesrepasfiras"))
 
                 .build();
     }
