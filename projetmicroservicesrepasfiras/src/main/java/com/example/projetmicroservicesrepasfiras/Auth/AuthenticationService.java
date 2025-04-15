@@ -10,9 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import java.util.UUID;
 
@@ -29,7 +27,6 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final GoogleIdTokenVerifier googleIdTokenVerifier;
 
     public AuthenticationResponse register(RegisterRequest request) {
         // Create User entity
@@ -128,66 +125,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse googleSignIn(String idTokenString) {
-        try {
-            GoogleIdToken idToken = googleIdTokenVerifier.verify(idTokenString);
-            if (idToken == null) {
-                throw new BadCredentialsException("Invalid Google ID token");
-            }
 
-            Payload payload = idToken.getPayload();
-            String email = payload.getEmail();
-            String firstName = (String) payload.get("given_name");
-            String lastName = (String) payload.get("family_name");
-
-            // Check if user exists
-            User user = userRepository.findByEmail(email)
-                    .orElseGet(() -> {
-                        // Create new user if not exists
-                        User newUser = User.builder()
-                                .email(email)
-                                .firstName(firstName)
-                                .lastName(lastName)
-                                .password(passwordEncoder.encode(generateRandomPassword()))
-                                .role(User.Role.USER)
-                                .build();
-                        return userRepository.save(newUser);
-                    });
-
-            // Generate JWT token with claims
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("role", user.getRole().name());
-            
-            Map<String, Object> realmAccess = new HashMap<>();
-            realmAccess.put("roles", Arrays.asList(user.getRole().name(), "offline_access", "default-roles-repaskeycloak"));
-            claims.put("realm_access", realmAccess);
-            
-            Map<String, Object> resourceAccess = new HashMap<>();
-            Map<String, Object> accountRoles = new HashMap<>();
-            accountRoles.put("roles", Arrays.asList("manage-account", "view-profile"));
-            resourceAccess.put("account", accountRoles);
-            claims.put("resource_access", resourceAccess);
-            
-            claims.put("email_verified", true);
-            claims.put("name", user.getFirstName() + " " + user.getLastName());
-            claims.put("preferred_username", user.getUsername());
-            claims.put("given_name", user.getFirstName());
-            claims.put("family_name", user.getLastName());
-            claims.put("email", user.getEmail());
-
-            String jwtToken = jwtService.generateToken(claims, user);
-
-            return AuthenticationResponse.builder()
-                    .token(jwtToken)
-                    .email(user.getEmail())
-                    .role(user.getRole().name())
-                    .message("Google sign-in successful")
-                    .build();
-
-        } catch (Exception e) {
-            throw new BadCredentialsException("Failed to process Google sign-in: " + e.getMessage());
-        }
-    }
 
     private String generateRandomPassword() {
         return UUID.randomUUID().toString();

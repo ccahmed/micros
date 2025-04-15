@@ -29,10 +29,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.login(request));
     }
 
-    @PostMapping("/google")
-    public ResponseEntity<AuthenticationResponse> googleSignIn(@RequestBody GoogleSignInRequest request) {
-        return ResponseEntity.ok(authenticationService.googleSignIn(request.getIdToken()));
-    }
+
 
     @Value("${welcome.message}")
     private String welcomeMessage;

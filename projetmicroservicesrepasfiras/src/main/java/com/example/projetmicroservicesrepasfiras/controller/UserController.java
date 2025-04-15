@@ -24,7 +24,7 @@ public class UserController {
     private final PDFService pdfService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@userSecurity.hasUserId(authentication, #id)")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@userSecurity.hasUserId(authentication, #id)")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
         try {
             User user = userService.updateUser(id, updatedUser);
@@ -74,7 +74,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@userSecurity.hasUserId(authentication, #id)")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
@@ -87,7 +87,7 @@ public class UserController {
     }
 
     @GetMapping("/download-pdf")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@userSecurity.hasUserId(authentication, #id)")
     public ResponseEntity<byte[]> downloadUsersPDF() {
         List<User> users = userService.getAllUsers();
         byte[] pdfBytes = pdfService.generateUsersPDF(users);

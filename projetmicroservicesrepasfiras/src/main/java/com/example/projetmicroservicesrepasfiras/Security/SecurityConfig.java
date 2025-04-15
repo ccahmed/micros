@@ -51,26 +51,23 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 System.out.println("Session management configured to STATELESS");
             })
-            .authorizeHttpRequests(authorize -> {
-                System.out.println("Configuring authorization rules");
-                authorize
-                    .requestMatchers("/auth/welcome").permitAll()
-                    .requestMatchers("/auth/hello").permitAll()
-                    .requestMatchers("/auth/register").permitAll()
-                    .requestMatchers("/auth/login").permitAll()
-                    .requestMatchers("/auth/google").permitAll()
-                    .requestMatchers("/auth/forgot-password").permitAll()
-                    .requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    .requestMatchers("/api/users/profile").authenticated()
-                    .requestMatchers("/api/password/**").permitAll()
-                    .requestMatchers("/auth/reset-password").permitAll()
-                    .requestMatchers("/auth/verify-email").permitAll()
-                    .requestMatchers("/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
-                    .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_ADMIN", "ADMIN")
-                    .anyRequest().authenticated();
-                System.out.println("Authorization rules configured");
-            })
-            .oauth2ResourceServer(oauth2 -> {
+                .authorizeHttpRequests(authorize -> {
+                    System.out.println("Configuring authorization rules");
+                    authorize
+                            .requestMatchers("/auth/**").permitAll()
+                            .requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                            .requestMatchers("/api/users/profile").authenticated()
+                            .requestMatchers("/api/password/**").permitAll()
+                            .requestMatchers("/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**",
+                                    "/swagger-resources", "/swagger-resources/**",
+                                    "/configuration/ui", "/configuration/security",
+                                    "/swagger-ui.html", "/webjars/**").permitAll()
+                            .requestMatchers("/api/users/**").hasAnyAuthority("USER", "ADMIN")
+                            .anyRequest().authenticated();
+                    System.out.println("Authorization rules configured");
+                })
+
+                .oauth2ResourceServer(oauth2 -> {
                 System.out.println("Configuring OAuth2 resource server");
                 oauth2.jwt(jwt -> {
                     jwt.jwtAuthenticationConverter(jwtAuthenticationConverter);
@@ -93,10 +90,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

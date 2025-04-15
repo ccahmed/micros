@@ -2,6 +2,21 @@ version: '3.8'
 
 services:
 
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - spring-cloud-network
+
   eureka-server:
     build: ./serverdiscover
 
@@ -24,17 +39,42 @@ services:
       - spring-cloud-network
 
   projetmicroservicesrepasfiras:
-    build: ./projetmicroservicesrepasfiras  # Corrigé ici
-    container_name: user-service  # Nom du container corrigé si nécessaire
+    build: ./projetmicroservicesrepasfiras
+    container_name: user-service
     ports:
-      - "8084:8084"
+      - "8093:8093"
     depends_on:
       - eureka-server
+      - mysql
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/user_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - spring-cloud-network
+
+  facture-service:
+    build: ./Facture_micro
+    container_name: facture-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+      - mysql
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/facture?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     networks:
       - spring-cloud-network
 
 networks:
   spring-cloud-network:
     driver: bridge
+
+volumes:
+  mysql_data:

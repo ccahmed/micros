@@ -1,0 +1,38 @@
+{
+  "/api": {
+    "target": "http://localhost:8093",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/auth": {
+    "target": "http://localhost:8093",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/users": {
+    "target": "http://localhost:8093",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/users": "/api/users"
+    }
+  },
+  "/api/users": {
+    "target": "http://localhost:8093",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api/users": "/api/users"
+    }
+  },
+  "/Facture": {
+    "target": "http://localhost:8093",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
