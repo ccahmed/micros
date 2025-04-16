@@ -11,6 +11,7 @@ import { FormDetailFactureComponent } from './form-detail-facture/form-detail-fa
 import { NgxPrintModule } from 'ngx-print';
 import { CodePromoModule } from '../code-promo/code-promo.module';
 import { FilterPipe } from './pipes/filter.pipe';
+import { FormFactureComponent } from './form-facture/form-facture.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { FilterPipe } from './pipes/filter.pipe';
     FactureComponent,
     CommandeComponent,
     PanierComponent,
+    FormFactureComponent,
     FormDetailFactureComponent,
     FilterPipe,
   ],

@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { User } from '../Model/user';
 import { SessionService } from '../services/session.service';
 import { AuthService } from '../services/auth.service';
-
+import { CategorieService } from '../services/categorie.service';
+import { CategorieProduit } from '../Model/CategorieProduit';
 
 @Component({
   selector: 'app-navbar',
@@ -18,24 +19,42 @@ export class NavbarComponent implements OnInit {
   check3: boolean;
   check4: boolean;
 
-  listCatP:any;
+  listCatP: CategorieProduit[] = [];
+  checkRec: boolean;
+  categories: CategorieProduit[] = [];
+  loading = true;
+  error: string | null = null;
 
-  checkRec:boolean;
-
-  constructor(private route: Router, private session : SessionService, private authService: AuthService
-  ) {
+  constructor(private route: Router, private session : SessionService, private authService: AuthService, private categorieService: CategorieService) {
   }
 
-
   ngOnInit(): void {
-   
     this.user2;
     this.check1 = true;
     this.check2 = false;
     this.check3 = false;
     this.check4 = false;
     this.checkRec = false;
+    this.loadCategories();
   }
+
+  loadCategories(): void {
+    this.loading = true;
+    this.error = null;
+    this.categorieService.afficherCategories().subscribe({
+      next: (data) => {
+        this.categories = data;
+        this.listCatP = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Erreur lors du chargement des catégories';
+        this.loading = false;
+        console.error('Erreur:', err);
+      }
+    });
+  }
+
   changeCheck1() {
     this.check1 = true;
     this.check2 = false;
@@ -79,7 +98,6 @@ export class NavbarComponent implements OnInit {
     this.session.clearSession();
     this.route.navigate(['/home']);
   }
-
 
   isDashboard(): boolean {
     return this.route.url === '/users/dashboard';

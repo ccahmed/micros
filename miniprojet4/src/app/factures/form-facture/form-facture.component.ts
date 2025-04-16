@@ -3,7 +3,6 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {Facture} from "../../Model/Facture";
 import {FactureService} from "../../services/facture.service";
 import {DetailFacture} from "../../Model/detailFacture";
-import {CodePromoService} from "../../services/code-promo.service";
 import {SessionService} from "../../services/session.service";
 import {User} from "../../Model/user";
 import { AuthService } from 'src/app/services/auth.service';
@@ -23,17 +22,20 @@ export class FormFactureComponent implements OnInit {
   usercodepromo:boolean;
   user:User;
   showerreur=false;
-  constructor(private factureService:FactureService,private serviseCodePromo: CodePromoService, private session:SessionService,
-              private authservice:AuthService) {
+  constructor(private factureService:FactureService, private session:SessionService,
+              private userService:AuthService) {
   }
 
   ngOnInit(): void {
 
-    this.usercodepromo=this.session.getUser().codepromo!=null;
-    this.user=this.session.getUser();
-    if(this.user.codepromo!=null){
-      this.facture.montantFacture=this.facture.montantFacture-(this.facture.montantFacture*this.user.codepromo.valeur/100);
+    const user = this.session.getUser();
+    const currentUser = this.session.getUser();
+    if (currentUser) {
+      this.user = currentUser;
+    } else {
+      throw new Error('User is null');
     }
+ 
     this.FormFacture= new FormGroup({
       'dateFacture': new FormControl({value: this.facture.dateFacture.toString(), disabled: true},[] ),
       'userFacture': new FormControl({value:this.facture.user.email,disabled:true}),
@@ -48,9 +50,7 @@ export class FormFactureComponent implements OnInit {
     }else {
       this.showerreur=false;
       this.factureService.calculeMontat(this.facture)
-      if (this.user.codepromo != null) {
-        this.facture.montantFacture = this.facture.montantFacture - (this.facture.montantFacture * this.user.codepromo.valeur / 100);
-      }
+   
       this.FormFacture.setValue({
         'dateFacture': this.facture.dateFacture.toString(),
         'userFacture': this.facture.user.email,
@@ -69,18 +69,25 @@ export class FormFactureComponent implements OnInit {
   this.addEvent.emit(this.facture);
   }
   getUserId():number{
-    return this.session.getUser().id;
+    const user = this.session.getUser();
+    if (!user) {
+      throw new Error('User is null');
+    }
+    return user.id;
   }
-//   addCodePromo(code:string){
-//     this.serviseCodePromo.affecterCodePromo(this.getUserId(),code).subscribe(()=>{
-//       let user=this.authservice.getUser(this.getUserId()).subscribe(()=>{
-//         this.session.setUser(user);
-//         this.usercodepromo=this.session.getUser().codepromo!=null;
-//         this.facture.montantFacture=this.facture.montantFacture-(this.facture.montantFacture*this.user.codepromo.valeur/100);
-//       });
+  addCodePromo(code:string){
+    // this.serviseCodePromo.affecterCodePromo(this.getUserId(),code).subscribe(()=>{
+    //   let user=this.userService.getUser(this.getUserId()).subscribe((u)=>{
+    //     this.session.setUser(u);
+    //     const currentUser = this.session.getUser();
+    //     this.usercodepromo = !!(currentUser && currentUser.codepromo != null);
+    //     if (this.user.codepromo) {
+    //       this.facture.montantFacture = this.facture.montantFacture - (this.facture.montantFacture * this.user.codepromo.valeur / 100);
+    //     }
+    //   });
 
-//     })
+    // })
 
-//   }
+  }
 }
 

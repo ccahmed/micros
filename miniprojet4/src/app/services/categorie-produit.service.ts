@@ -1,29 +1,29 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {CategorieProduit} from "../Model/CategorieProduit";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategorieProduitService {
+  private apiUrl = '/api';
 
-  constructor(private http:HttpClient) {
+  constructor(private http:HttpClient) {}
 
+  public afficherCategoriesProduit(): Observable<CategorieProduit[]> {
+    return this.http.get<CategorieProduit[]>(`${this.apiUrl}/productCategory/retrieve-all-productsCategories`);
   }
 
-  public afficherCategoriesProduit ()
-  {return this.http.get("http://localhost:8081/SpringMVC/productCategory/retrieve-all-productsCategories");}
-
-  public saveCategorieProduit (cat:CategorieProduit)
-  {return this.http.post("http://localhost:8081/SpringMVC/productCategory/add-productCategory",cat);}
-
-
-  public supprimerCategorieProduit (id :number)
-  {return this.http.delete("http://localhost:8081/SpringMVC/productCategory/remove-productCategory/"+id);
+  public saveCategorieProduit(cat: CategorieProduit): Observable<CategorieProduit> {
+    return this.http.post<CategorieProduit>(`${this.apiUrl}/productCategory/add-productCategory`, cat);
   }
 
-  public getCategorieProduit (id :number)
-  {return this.http.get("http://localhost:8081/SpringMVC/productCategory/retrieve-productCategory/"+id);}
+  public supprimerCategorieProduit(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/productCategory/remove-productCategory/${id}`);
+  }
 
-
+  public getCategorieProduit(id: number): Observable<CategorieProduit> {
+    return this.http.get<CategorieProduit>(`${this.apiUrl}/productCategory/retrieve-productCategory/${id}`);
+  }
 }

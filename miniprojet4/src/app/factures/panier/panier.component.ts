@@ -16,12 +16,7 @@ export class PanierComponent implements OnInit {
 
   ngOnInit(): void {
     this.ProductOfpanier=this.sessionService.getPanier();
-    if (this.sessionService.getUser() == null) {
-      this.route.navigate(['/users/connexion'])
-    } else if (this.sessionService.getUser().badge=='ADMIN'){
-      this.route.navigate(['/factures/facture'])
 
-    }
   }
   getUserType():string{
     return this.sessionService.getSessionType();

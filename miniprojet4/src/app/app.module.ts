@@ -8,7 +8,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { HomeComponent } from './home/home.component';
+import { HomeModule } from './home/home.module';
 
 /*import { CategorieProduitComponent } from './products/categorie-produit/categorie-produit.component';
 import { ProduitComponent } from './products/produit/produit.component';
@@ -28,7 +28,6 @@ import { SidemenuComponent } from './sidemenu/sidemenu.component';
     AppComponent,
     NavbarComponent,
     FooterComponent,
-    HomeComponent,
     SidemenuComponent,
     /*CategorieProduitComponent,
     ProduitComponent,
@@ -48,7 +47,8 @@ import { SidemenuComponent } from './sidemenu/sidemenu.component';
     HttpClientModule,
     GoogleChartsModule,
     NgbModule,
-    RouterModule
+    RouterModule,
+    HomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

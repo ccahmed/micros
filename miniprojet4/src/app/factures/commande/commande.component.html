@@ -1,5 +1,4 @@
-<!-- <app-form-facture *ngIf="showFacture" (addEvent)="addFacture($event)" [facture]="facture" ></app-form-facture> -->
-<!-- Composant non disponible -->
+<app-form-facture *ngIf="showFacture" (addEvent)="addFacture($event)" [facture]="facture" ></app-form-facture>
 
 
 <div class="card my-auto mx-auto w-50" *ngIf="showFacture==false">
@@ -19,7 +18,7 @@
           .</p>
       </div>
       <div class="modal-footer">
-        <a routerLink="/products/produit/1" class="btn btn-danger btn-block" data-dismiss="modal">OK</a>
+        <a routerLink="/home" class="btn btn-danger btn-block" data-dismiss="modal">OK</a>
       </div>
     </div>
   </div>

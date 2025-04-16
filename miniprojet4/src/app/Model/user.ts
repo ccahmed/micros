@@ -1,30 +1,33 @@
-import { CodePromo } from "./CodePromo";
-import { Facture } from "./Facture";
-import { LikeDislike } from "./LikeDislike";
-import { NoteProduit } from "./NoteProduit";
-import { Reclamation } from "./Reclamation";
-import { ReponseReclamation } from "./ReponseReclamation";
-
-export class User{
+export class User {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
+  password: string;
+  verificationCode: string;
   role: 'ADMIN' | 'USER';
-   password?: string;
-    badge: string;
-    promoActive: boolean;
-    factures: Facture[];
-    likedislike: LikeDislike[];
-    codepromo: CodePromo;
-    notes: NoteProduit[];
-    reponses: ReponseReclamation[];
-    reclamations: Reclamation[];
+  resetToken: string;
+  tokenExpiration: Date;
 
-    constructor(email:string="",password:string="",badge:string=""){
-      this.email = email;
-      this.password = password;
-      this.badge = badge;
-    }
+  constructor(
+    email: string = "",
+    password: string = "",
+    firstName: string = "",
+    lastName: string = "",
+    role: 'ADMIN' | 'USER' = 'USER',
+    verificationCode: string = "",
+    resetToken: string = "",
+    tokenExpiration: Date = new Date()
+  ) {
+    this.email = email;
+    this.password = password;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.role = role;
+    this.verificationCode = verificationCode;
+    this.resetToken = resetToken;
+    this.tokenExpiration = tokenExpiration;
   }
-  
+
+
+}

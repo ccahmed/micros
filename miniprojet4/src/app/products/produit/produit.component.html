@@ -42,50 +42,19 @@
   </table>
 
 
-  <div class="row" >
-    <div class="col-md-4" *ngFor="let p of listProduitFront ">
-      <!-- bbb_deals -->
-      <div class="bbb_deals">
-        <div class=" ribbon1 text-uppercase"><span> ref: {{p.code}}</span></div>
-        <div class="bbb_deals_title">{{p.libelle}}</div>
-        <div class="mb-1  " >
-          <div class="textNote d-inline-block " style="font-size: 1rem; color:black">Avis</div>
-          <ngb-rating [max]="5"   [(rate)]="p.moyenneNote "   style="color: orange ; font-size: xx-large"  [readonly]="true" class="d-inline-block"></ngb-rating>
+  <div class="row">
+    <div class="col-md-4" *ngFor="let p of listProduitFront">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{p.libelle}}</h5>
+          <button *ngIf="getUserType()==='USER'" class="btn btn-primary" [disabled]="ProductInsidePanier(p)" (click)="ajouterPanier(p)">
+            <i class="fas fa-shopping-cart"></i> Ajouter au panier
+          </button>
+   
         </div>
-        <div class="bbb_deals_slider_container">
-          <div class=" bbb_deals_item">
-            <div class="text-center"><img class="img-fluid w-100" style="height: 300px" src="{{p.imageProduit}}" alt=""></div>
-            <div class="bbb_deals_content">
-              <div class="bbb_deals_info_line d-flex flex-row justify-content-start">
-                <div class="bbb_deals_item_category"><a href="#">
-                  <img class="mr-2" style="width: 20px; height: 20px" src="{{p.categorieProduit.categorieProduitIcone}}">{{p.categorieProduit.libelle}}</a></div>
-              </div>
-              <div class="bbb_deals_info_line d-flex flex-row justify-content-start">
-                <div class="bbb_deals_item_name">{{p.libelle}}</div>
-                <div class="bbb_deals_item_price ml-auto">{{p.prixUnitaire}}dt</div>
-              </div>
-              <div class="available">
-                <div class="available_line d-flex flex-row justify-content-start">
-                  <div class="available_title">Quantité: <span>{{p.quantiteEnStock}}</span></div>
-
-                  <div class="sold_stars ml-auto"><ngb-rating [max]="5" [id]="p.idProduit"  [(rate)]="p.note.noteproduit" (rateChange)="updateRate(p)"  style="color: orange ; font-size: xx-large" [readonly]="false"></ngb-rating> </div>
-                </div>
-
-
-              </div>
-            </div>
-            <button *ngIf="getUserType()==='USER' " class="btn btn-primary mt-3 w-100" [disabled]="ProductInsidePanier(p)" (click)="ajouterPanier(p)"> <i class="fas fa-shopping-cart"></i>Ajouter au panier</button>
-            <button (click)="wish(p)" class="btn btn-outline-danger mt-3 w-100" [disabled]="p.valeur ==true"> <i class="fas fa-heart"></i>Ajouter au favoris</button>
-
-          </div>
-        </div>
-
       </div>
-
-
     </div>
+  </div>
 
   <notifier-container></notifier-container>
-
-</div>
-
+<

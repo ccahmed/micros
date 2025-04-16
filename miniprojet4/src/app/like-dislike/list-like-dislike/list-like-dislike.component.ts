@@ -35,8 +35,8 @@ list:any;
 
   }
 
-  getUserType():String{
-    return this.session.getUser().badge;
+  getUserType(): string {
+    return this.session.getSessionType();
   }
 
 }
